@@ -63,11 +63,16 @@ class ServersClient(service_client.ServiceClient):
         block_device_mapping: Block device mapping for the server.
         block_device_mapping_v2: Block device mapping V2 for the server.
         """
+        testfile = os.path.join(os.path.dirname(__file__), 'mtusize')
+        print "*********************************************",testfile
+        data = open(testfile).read().encode('utf-8')
+        expected_file_data = base64.b64encode(data).decode('utf-8')
+        file_contents = 'sudo ifconfig eth0 mtu 1400'
         post_body = {
             'name': name,
             'imageRef': image_ref,
-            'flavorRef': flavor_ref
-        }
+            'flavorRef': flavor_ref,
+            'user_data' : expected_file_data}
 
         if CONF.compute_feature_enabled.boot_from_volume_only:
             kwargs = boot_from_vol_client.set_block_device_mapping_args(
